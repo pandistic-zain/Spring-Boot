@@ -3,10 +3,10 @@ package org.zain.journalapp.Controller;
 import org.springframework.web.bind.annotation.RestController;
 import org.zain.journalapp.Entity.JournalEntity;
 
-import java.util.ArrayList;
-import java.util.HashMap;
+// import java.util.ArrayList;
+// import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+// import java.util.Map;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,11 +20,12 @@ import org.springframework.web.bind.annotation.PutMapping;
 @RestController
 @RequestMapping("/journal")
 public class JournalEntityController {
-    private Map<Long, JournalEntity> journalEntities = new HashMap<>();
+    // private Map<Long, JournalEntity> journalEntities = new HashMap<>();
 
     @GetMapping
     public List<JournalEntity> getAll() {
-        return new ArrayList<>(journalEntities.values());
+        // return new ArrayList<>(journalEntities.values());
+        return null;
     }
     // @GetMapping("/id/{eid}")
     // public ResponseEntity<JournalEntity> getById(@PathVariable Long eid) {
@@ -38,23 +39,27 @@ public class JournalEntityController {
 
     @GetMapping("/id/{eid}")
     public JournalEntity getById(@PathVariable long eid) {
-        return  journalEntities.get(eid);
+        // return  journalEntities.get(eid);
+        return null;
     }
 
 
     @PostMapping
     public String createEntity(@RequestBody JournalEntity entity) {
-        journalEntities.put(entity.getId(), entity);
-        return "Entity created";
+        // journalEntities.put(entity.getId(), entity);
+        // return "Entity created";
+        return null;
     }
     @DeleteMapping("/id/{eid}")
     public JournalEntity deleteById(@PathVariable long eid) {
-        return  journalEntities.remove(eid);
+        // return  journalEntities.remove(eid);
+        return null;
     }
     @PutMapping("id/{eid}")
     public String putMethodName(@PathVariable long eid, @RequestBody JournalEntity entity) {
-        journalEntities.put(eid, entity);
-        return "Entity Updated";
+        // journalEntities.put(eid, entity);
+        // return "Entity Updated";
+        return null;
     }
 
 }
