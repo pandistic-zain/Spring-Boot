@@ -43,7 +43,6 @@ public class JournalEntityController {
     public String createEntity(@RequestBody JournalEntity entity) {
         // journalEntities.put(entity.getId(), entity);
         // return "Entity created";
-        entity.setDate(LocalDateTime.now());
         journalEntityServices.saveJournalEntity(entity);
         return "Entity Created in MongoDb";
     }
@@ -67,16 +66,4 @@ public class JournalEntityController {
         journalEntityServices.saveJournalEntity(old);
         return "Entity Updated In Database";
     }
-    /*
-      @GetMapping("/id/{eid}")
-      public ResponseEntity<JournalEntity> getById(@PathVariable Long eid) {
-      JournalEntity journalEntity = journalEntities.get(eid);
-      if (journalEntity != null) {
-      return ResponseEntity.ok(journalEntity);
-      } else {
-      return ResponseEntity.notFound().build();
-      }
-      }
-     */
-
 }

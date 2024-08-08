@@ -1,5 +1,6 @@
 package org.zain.journalapp.Services;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -15,6 +16,7 @@ public class JournalEntityServices {
     private JournalEntityRepository journalEntityRepository;
 
     public void saveJournalEntity(JournalEntity journalEntity ){
+        journalEntity.setDate(LocalDateTime.now());
         journalEntityRepository.save(journalEntity);
     }
     
