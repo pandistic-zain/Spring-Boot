@@ -3,7 +3,6 @@ package org.zain.journalapp.Controller;
 import org.springframework.web.bind.annotation.RestController;
 import org.zain.journalapp.Entity.JournalEntity;
 import org.zain.journalapp.Services.JournalEntityServices;
-
 // import java.util.ArrayList;
 // import java.util.HashMap;
 import java.util.List;
@@ -34,7 +33,7 @@ public class JournalEntityController {
             List<JournalEntity> entities = journalEntityServices.getAllEntities();
             return new ResponseEntity<>(entities, HttpStatus.OK);
         } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -50,7 +49,7 @@ public class JournalEntityController {
             }
         } catch (Exception e) {
             // Log the exception (e.g., using a logger)
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -63,7 +62,7 @@ public class JournalEntityController {
             return new ResponseEntity<>("Entity Created in MongoDB", HttpStatus.CREATED);
         } catch (Exception e) {
             // Log the exception (e.g., using a logger)
-            return new ResponseEntity<>("Failed to create entity", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("Failed to create entity", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -79,7 +78,7 @@ public class JournalEntityController {
             }
         } catch (Exception e) {
             // Log the exception (e.g., using a logger)
-            return new ResponseEntity<>("Failed to delete entity", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("Failed to delete entity", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -100,7 +99,7 @@ public class JournalEntityController {
             }
         } catch (Exception e) {
             // Log the exception (e.g., using a logger)
-            return new ResponseEntity<>("Failed to update entity", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("Failed to update entity", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }
