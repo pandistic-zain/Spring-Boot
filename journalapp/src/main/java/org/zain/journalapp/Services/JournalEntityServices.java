@@ -26,7 +26,8 @@ public class JournalEntityServices {
     public Optional<JournalEntity>findById(ObjectId id){
         return journalEntityRepository.findById(id);
     }
-    public void deleteJournalEntity(ObjectId id){
+    public boolean deleteJournalEntity(ObjectId id){
         journalEntityRepository.deleteById(id);
+        return true;
     }
 }
