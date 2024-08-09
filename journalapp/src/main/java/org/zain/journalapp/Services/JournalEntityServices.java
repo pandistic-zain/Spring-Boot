@@ -9,15 +9,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.zain.journalapp.DAO.JournalEntityRepository;
 import org.zain.journalapp.Entity.JournalEntity;
+import org.zain.journalapp.Entity.UserEntity;
 
 @Component
 public class JournalEntityServices {
     @Autowired
     private JournalEntityRepository journalEntityRepository;
+    @Autowired
+    private UserServices userServices;
+    public void saveJournalEntity(JournalEntity journalEntity , String username) throws Exception{
+        UserEntity user = userServices.findByName(username);
 
-    public void saveJournalEntity(JournalEntity journalEntity ){
         journalEntity.setDate(LocalDateTime.now());
-        journalEntityRepository.save(journalEntity);
+        JournalEntity saved = journalEntityRepository.save(journalEntity);
+        user.getJournalEntities().add(saved);
+        userServices.saveUser(user);
     }
     
     public List<JournalEntity> getAllEntities(){

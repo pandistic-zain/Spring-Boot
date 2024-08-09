@@ -2,7 +2,10 @@ package org.zain.journalapp.Controller;
 
 import org.springframework.web.bind.annotation.RestController;
 import org.zain.journalapp.Entity.JournalEntity;
+import org.zain.journalapp.Entity.UserEntity;
 import org.zain.journalapp.Services.JournalEntityServices;
+import org.zain.journalapp.Services.UserServices;
+
 // import java.util.ArrayList;
 // import java.util.HashMap;
 import java.util.List;
@@ -27,12 +30,19 @@ public class JournalEntityController {
     @Autowired
     private JournalEntityServices journalEntityServices;
 
-    @GetMapping
-    public ResponseEntity<List<JournalEntity>> getAll() {
+    @Autowired
+    private UserServices userServices;
+    @GetMapping("/{userName}")
+    public ResponseEntity<List<JournalEntity>> getAllJournalEntriesOfUser(@PathVariable String username){
         try {
             // return new ArrayList<>(journalEntities.values());
-            List<JournalEntity> entities = journalEntityServices.getAllEntities();
+            UserEntity user = userServices.findByName(username);
+
+            List<JournalEntity> entities = user.getJournalEntities();
+            if(entities != null && !entities.isEmpty()){
             return new ResponseEntity<>(entities, HttpStatus.OK);
+            }
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -54,12 +64,12 @@ public class JournalEntityController {
         }
     }
 
-    @PostMapping
-    public ResponseEntity<String> createEntity(@RequestBody JournalEntity entity) {
+    @PostMapping("/{userName}")
+    public ResponseEntity<String> createEntity(@RequestBody JournalEntity entity , @PathVariable String username) {
         try {
             // journalEntities.put(entity.getId(), entity);
             // return "Entity created";
-            journalEntityServices.saveJournalEntity(entity);
+            journalEntityServices.saveJournalEntity(entity , username);
             return new ResponseEntity<>("Entity Created in MongoDB", HttpStatus.CREATED);
         } catch (Exception e) {
             // Log the exception (e.g., using a logger)
@@ -96,7 +106,7 @@ public class JournalEntityController {
                 old.setContent(
                         newEntity.getContent() != null && !newEntity.getContent().isEmpty() ? newEntity.getContent()
                                 : old.getContent());
-                journalEntityServices.saveJournalEntity(old);
+                journalEntityServices.saveJournalEntity(old, null);
                 return new ResponseEntity<>("Entity Updated In Database", HttpStatus.OK);
             } else {
                 return new ResponseEntity<>("Entity Not Found", HttpStatus.NOT_FOUND);
