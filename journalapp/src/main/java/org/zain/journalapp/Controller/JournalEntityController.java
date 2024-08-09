@@ -26,6 +26,7 @@ public class JournalEntityController {
     // private Map<Long, JournalEntity> journalEntities = new HashMap<>();
     @Autowired
     private JournalEntityServices journalEntityServices;
+
     @GetMapping
     public ResponseEntity<List<JournalEntity>> getAll() {
         try {
@@ -90,15 +91,17 @@ public class JournalEntityController {
             Optional<JournalEntity> optionalOld = journalEntityServices.findById(eid);
             if (optionalOld.isPresent()) {
                 JournalEntity old = optionalOld.get();
-                old.setTitle(newEntity.getTitle() != null && !newEntity.getTitle().isEmpty() ? newEntity.getTitle() : old.getTitle());
-                old.setContent(newEntity.getContent() != null && !newEntity.getContent().isEmpty() ? newEntity.getContent() : old.getContent());
+                old.setTitle(newEntity.getTitle() != null && !newEntity.getTitle().isEmpty() ? newEntity.getTitle()
+                        : old.getTitle());
+                old.setContent(
+                        newEntity.getContent() != null && !newEntity.getContent().isEmpty() ? newEntity.getContent()
+                                : old.getContent());
                 journalEntityServices.saveJournalEntity(old);
                 return new ResponseEntity<>("Entity Updated In Database", HttpStatus.OK);
             } else {
                 return new ResponseEntity<>("Entity Not Found", HttpStatus.NOT_FOUND);
             }
         } catch (Exception e) {
-            // Log the exception (e.g., using a logger)
             return new ResponseEntity<>("Failed to update entity", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }

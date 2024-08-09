@@ -1,7 +1,6 @@
 package org.zain.journalapp.Services;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +22,7 @@ public class UserServices {
         return "User Saved in Database";
     }
 
-    public Optional<UserEntity> findByName(String name) {
+    public UserEntity findByName(String name) {
         return userRepository.findByName(name);
     }
 
@@ -31,5 +30,6 @@ public class UserServices {
         userRepository.deleteById(id);
         return true;
     }
+
 
 }
