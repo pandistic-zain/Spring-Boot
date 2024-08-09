@@ -27,7 +27,7 @@ public class UserEntity {
     private String userName;
 
     @NonNull
-    private String password;
+    private String password; // Consider storing a hashed password
 
     @DBRef
     private List<JournalEntity> journalEntities = new ArrayList<>();
