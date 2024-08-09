@@ -33,10 +33,10 @@ public class JournalEntityController {
     @Autowired
     private UserServices userServices;
     @GetMapping("/{userName}")
-    public ResponseEntity<List<JournalEntity>> getAllJournalEntriesOfUser(@PathVariable String username){
+    public ResponseEntity<List<JournalEntity>> getAllJournalEntriesOfUser(@PathVariable String userName){
         try {
             // return new ArrayList<>(journalEntities.values());
-            UserEntity user = userServices.findByName(username);
+            UserEntity user = userServices.findByName(userName);
 
             List<JournalEntity> entities = user.getJournalEntities();
             if(entities != null && !entities.isEmpty()){
@@ -65,11 +65,11 @@ public class JournalEntityController {
     }
 
     @PostMapping("/{userName}")
-    public ResponseEntity<String> createEntity(@RequestBody JournalEntity entity , @PathVariable String username) {
+    public ResponseEntity<String> createEntity(@RequestBody JournalEntity entity , @PathVariable String userName) {
         try {
             // journalEntities.put(entity.getId(), entity);
             // return "Entity created";
-            journalEntityServices.saveJournalEntity(entity , username);
+            journalEntityServices.saveJournalEntity(entity , userName);
             return new ResponseEntity<>("Entity Created in MongoDB", HttpStatus.CREATED);
         } catch (Exception e) {
             // Log the exception (e.g., using a logger)
@@ -77,11 +77,11 @@ public class JournalEntityController {
         }
     }
 
-    @DeleteMapping("/id/{eid}")
-    public ResponseEntity<String> deleteById(@PathVariable ObjectId eid) {
+    @DeleteMapping("/id/{userName}/{eid}")
+    public ResponseEntity<String> deleteById(@PathVariable ObjectId eid, @PathVariable String userName) {
         try {
             // return journalEntities.remove(eid);
-            boolean deleted = journalEntityServices.deleteJournalEntity(eid);
+            boolean deleted = journalEntityServices.deleteJournalEntity(eid , userName);
             if (deleted) {
                 return new ResponseEntity<>("Entity Deleted", HttpStatus.OK);
             } else {
@@ -93,8 +93,9 @@ public class JournalEntityController {
         }
     }
 
-    @PutMapping("/id/{eid}")
-    public ResponseEntity<String> putMethodName(@PathVariable ObjectId eid, @RequestBody JournalEntity newEntity) {
+    @PutMapping("/id/{userName}/{eid}")
+    public ResponseEntity<String> putMethodName(@PathVariable ObjectId eid, @RequestBody JournalEntity newEntity, @PathVariable String userName) 
+    {
         try {
             // journalEntities.put(eid, entity);
             // return "Entity Updated";
@@ -106,7 +107,7 @@ public class JournalEntityController {
                 old.setContent(
                         newEntity.getContent() != null && !newEntity.getContent().isEmpty() ? newEntity.getContent()
                                 : old.getContent());
-                journalEntityServices.saveJournalEntity(old, null);
+                journalEntityServices.saveJournalEntity(old);
                 return new ResponseEntity<>("Entity Updated In Database", HttpStatus.OK);
             } else {
                 return new ResponseEntity<>("Entity Not Found", HttpStatus.NOT_FOUND);

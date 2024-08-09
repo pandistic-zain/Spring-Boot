@@ -25,6 +25,13 @@ public class JournalEntityServices {
         user.getJournalEntities().add(saved);
         userServices.saveUser(user);
     }
+    public void saveJournalEntity(JournalEntity journalEntity ) 
+    {
+
+        journalEntity.setDate(LocalDateTime.now());
+        journalEntityRepository.save(journalEntity);
+
+    }
     
     public List<JournalEntity> getAllEntities(){
         return journalEntityRepository.findAll();
@@ -32,7 +39,10 @@ public class JournalEntityServices {
     public Optional<JournalEntity>findById(ObjectId id){
         return journalEntityRepository.findById(id);
     }
-    public boolean deleteJournalEntity(ObjectId id){
+    public boolean deleteJournalEntity(ObjectId id, String username) throws Exception{
+        UserEntity user = userServices.findByName(username);
+        user.getJournalEntities().removeIf(x-> x.getId().equals(id));
+        userServices.saveUser(user);
         journalEntityRepository.deleteById(id);
         return true;
     }
