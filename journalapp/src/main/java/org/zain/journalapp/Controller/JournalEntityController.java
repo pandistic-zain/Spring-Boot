@@ -2,7 +2,6 @@ package org.zain.journalapp.Controller;
 
 import org.springframework.web.bind.annotation.RestController;
 import org.zain.journalapp.Entity.JournalEntity;
-import org.zain.journalapp.Entity.UserEntity;
 import org.zain.journalapp.Services.JournalEntityServices;
 import org.zain.journalapp.Services.UserServices;
 
