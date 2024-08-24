@@ -6,14 +6,11 @@ import org.zain.journalapp.Entity.UserEntity;
 import org.zain.journalapp.Services.JournalEntityServices;
 import org.zain.journalapp.Services.UserServices;
 
-import java.time.LocalDateTime;
 // import java.util.ArrayList;
 // import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 // import java.util.Map;
-
-
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -33,63 +30,90 @@ public class JournalEntityController {
     @Autowired
     private JournalEntityServices journalEntityServices;
 
-    @GetMapping
-    public ResponseEntity<List<JournalEntity>> getAll() {
-        // return new ArrayList<>(journalEntities.values());
-        List<JournalEntity> allEntities = journalEntityServices.getAllEntities();
+    @Autowired
+    private UserServices userServices;
+    @GetMapping("/{userName}")
+    public ResponseEntity<List<JournalEntity>> getAllJournalEntriesOfUser(@PathVariable String userName){
+        try {
+            // return new ArrayList<>(journalEntities.values());
+            UserEntity user = userServices.findByName(userName);
 
-        if (allEntities != null) {
-            return new ResponseEntity<>(allEntities, HttpStatus.OK);
+            List<JournalEntity> entities = user.getJournalEntities();
+            if(entities != null && !entities.isEmpty()){
+            return new ResponseEntity<>(entities, HttpStatus.OK);
+            }
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     @GetMapping("/id/{eid}")
     public ResponseEntity<JournalEntity> getById(@PathVariable ObjectId eid) {
-        // return journalEntities.get(eid);
-        Optional<JournalEntity> journalentity = journalEntityServices.findById(eid);
-        if (journalentity.isPresent()) {
-            return new ResponseEntity<>(journalentity.get(), HttpStatus.OK);
-        }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-    }
-
-    @PostMapping
-    public ResponseEntity<JournalEntity> createEntity(@RequestBody JournalEntity entity) {
-        // journalEntities.put(entity.getId(), entity);
-        // return "Entity created";
         try {
-            entity.setDate(LocalDateTime.now());
-            journalEntityServices.saveJournalEntity(entity);
-            return new ResponseEntity<>(entity, HttpStatus.CREATED);
+            // return journalEntities.get(eid);
+            Optional<JournalEntity> entity = journalEntityServices.findById(eid);
+            if (entity.isPresent()) {
+                return new ResponseEntity<>(entity.get(), HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
         } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            // Log the exception (e.g., using a logger)
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
-    @DeleteMapping("/id/{eid}")
-    public ResponseEntity<?> deleteById(@PathVariable ObjectId eid) {
-        // return journalEntities.remove(eid);
-        journalEntityServices.deleteJournalEntity(eid);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    @PostMapping("/{userName}")
+    public ResponseEntity<String> createEntity(@RequestBody JournalEntity entity , @PathVariable String userName) {
+        try {
+            // journalEntities.put(entity.getId(), entity);
+            // return "Entity created";
+            journalEntityServices.saveJournalEntity(entity , userName);
+            return new ResponseEntity<>("Entity Created in MongoDB", HttpStatus.CREATED);
+        } catch (Exception e) {
+            // Log the exception (e.g., using a logger)
+            return new ResponseEntity<>("Failed to create entity", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
-    @PutMapping("id/{eid}")
-    public ResponseEntity<JournalEntity> putMethodName(@PathVariable ObjectId eid,
-            @RequestBody JournalEntity newEntity) {
-        // journalEntities.put(eid, entity);
-        // return "Entity Updated";
-        JournalEntity old = journalEntityServices.findById(eid).orElse(null);
-        if (old != null) {
-            old.setTitle(
-                    newEntity.getTitle() != null && newEntity.getTitle() != "" ? newEntity.getTitle() : old.getTitle());
-            old.setContent(newEntity.getContent() != null && newEntity.getContent() != "" ? newEntity.getContent()
-                    : old.getContent());
-
-            journalEntityServices.saveJournalEntity(old);
-            return new ResponseEntity<>(old, HttpStatus.OK);
+    @DeleteMapping("/id/{userName}/{eid}")
+    public ResponseEntity<String> deleteById(@PathVariable ObjectId eid, @PathVariable String userName) {
+        try {
+            // return journalEntities.remove(eid);
+            boolean deleted = journalEntityServices.deleteJournalEntity(eid , userName);
+            if (deleted) {
+                return new ResponseEntity<>("Entity Deleted", HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>("Entity Not Found", HttpStatus.NOT_FOUND);
+            }
+        } catch (Exception e) {
+            // Log the exception (e.g., using a logger)
+            return new ResponseEntity<>("Failed to delete entity", HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
 
+    @PutMapping("/id/{userName}/{eid}")
+    public ResponseEntity<String> putMethodName(@PathVariable ObjectId eid, @RequestBody JournalEntity newEntity, @PathVariable String userName) 
+    {
+        try {
+            // journalEntities.put(eid, entity);
+            // return "Entity Updated";
+            Optional<JournalEntity> optionalOld = journalEntityServices.findById(eid);
+            if (optionalOld.isPresent()) {
+                JournalEntity old = optionalOld.get();
+                old.setTitle(newEntity.getTitle() != null && !newEntity.getTitle().isEmpty() ? newEntity.getTitle()
+                        : old.getTitle());
+                old.setContent(
+                        newEntity.getContent() != null && !newEntity.getContent().isEmpty() ? newEntity.getContent()
+                                : old.getContent());
+                journalEntityServices.saveJournalEntity(old);
+                return new ResponseEntity<>("Entity Updated In Database", HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>("Entity Not Found", HttpStatus.NOT_FOUND);
+            }
+        } catch (Exception e) {
+            return new ResponseEntity<>("Failed to update entity", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 }
