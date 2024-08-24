@@ -2,12 +2,14 @@ package org.zain.journalapp.Controller;
 
 import org.springframework.web.bind.annotation.RestController;
 import org.zain.journalapp.Entity.JournalEntity;
+import org.zain.journalapp.Entity.UserEntity;
 import org.zain.journalapp.Services.JournalEntityServices;
+import org.zain.journalapp.Services.UserServices;
 
-import java.time.LocalDateTime;
 // import java.util.ArrayList;
 // import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 // import java.util.Map;
 import java.util.Optional;
 
