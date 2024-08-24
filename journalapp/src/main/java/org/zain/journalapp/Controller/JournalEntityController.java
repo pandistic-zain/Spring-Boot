@@ -2,10 +2,7 @@ package org.zain.journalapp.Controller;
 
 import org.springframework.web.bind.annotation.RestController;
 import org.zain.journalapp.Entity.JournalEntity;
-import org.zain.journalapp.Entity.UserEntity;
 import org.zain.journalapp.Services.JournalEntityServices;
-import org.zain.journalapp.Services.UserServices;
-
 import java.time.LocalDateTime;
 // import java.util.ArrayList;
 // import java.util.HashMap;
@@ -68,9 +65,9 @@ public class JournalEntityController {
     }
 
     @DeleteMapping("/id/{eid}")
-    public ResponseEntity<?> deleteById(@PathVariable ObjectId eid) {
+    public ResponseEntity<?> deleteById(@PathVariable ObjectId eid, @PathVariable String username) throws Exception {
         // return journalEntities.remove(eid);
-        journalEntityServices.deleteJournalEntity(eid);
+        journalEntityServices.deleteJournalEntity(eid, username);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
