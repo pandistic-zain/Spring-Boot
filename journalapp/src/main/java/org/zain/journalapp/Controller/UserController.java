@@ -53,7 +53,7 @@ public class UserController {
     public ResponseEntity<String> deleteUser() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         try {
-            userRepository.deleteByUsername(auth.getName());
+            userRepository.deleteByUserName(auth.getName());
             return new ResponseEntity<>("User Deleted Successfully", HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>("Failed to Delete User", HttpStatus.INTERNAL_SERVER_ERROR);
