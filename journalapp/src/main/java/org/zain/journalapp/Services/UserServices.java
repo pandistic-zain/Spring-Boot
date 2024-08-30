@@ -32,6 +32,13 @@ public class UserServices {
             throw new Exception("User with the same username already exists.");
         }
     }
+    public void saveNewUser(UserEntity user) throws Exception {
+        try {
+            userRepository.save(user);
+        } catch (DuplicateKeyException e) {
+            throw new Exception("User with the same username already exists.");
+        }
+    }
 
     public UserEntity findByName(String name) {
         return userRepository.findByUserName(name);

@@ -26,7 +26,7 @@ public class JournalEntityServices {
         journalEntity.setDate(LocalDateTime.now());
         JournalEntity saved = journalEntityRepository.save(journalEntity);
         user.getJournalEntities().add(saved);
-        userServices.saveUser(user);
+        userServices.saveNewUser(user);
        } catch (Exception e) {
         System.out.println("Exception Occured..."+ e);
         throw new Exception("Error Occured ... ", e);

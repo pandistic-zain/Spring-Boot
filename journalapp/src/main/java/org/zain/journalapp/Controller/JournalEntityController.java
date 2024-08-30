@@ -15,6 +15,8 @@ import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -32,11 +34,13 @@ public class JournalEntityController {
 
     @Autowired
     private UserServices userServices;
-    @GetMapping("/{userName}")
-    public ResponseEntity<List<JournalEntity>> getAllJournalEntriesOfUser(@PathVariable String userName){
+    @GetMapping
+    public ResponseEntity<List<JournalEntity>> getAllJournalEntriesOfUser(){
+         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String username = auth.getName();
         try {
             // return new ArrayList<>(journalEntities.values());
-            UserEntity user = userServices.findByName(userName);
+            UserEntity user = userServices.findByName(username);
 
             List<JournalEntity> entities = user.getJournalEntities();
             if(entities != null && !entities.isEmpty()){
@@ -64,15 +68,17 @@ public class JournalEntityController {
         }
     }
 
-    @PostMapping("/{userName}")
-    public ResponseEntity<String> createEntity(@RequestBody JournalEntity entity , @PathVariable String userName) {
+    @PostMapping
+    public ResponseEntity<String> createEntity(@RequestBody JournalEntity entity) {
+       
         try {
             // journalEntities.put(entity.getId(), entity);
             // return "Entity created";
-            journalEntityServices.saveJournalEntity(entity , userName);
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            String username = auth.getName();
+            journalEntityServices.saveJournalEntity(entity , username);
             return new ResponseEntity<>("Entity Created in MongoDB", HttpStatus.CREATED);
         } catch (Exception e) {
-            // Log the exception (e.g., using a logger)
             return new ResponseEntity<>("Failed to create entity", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
