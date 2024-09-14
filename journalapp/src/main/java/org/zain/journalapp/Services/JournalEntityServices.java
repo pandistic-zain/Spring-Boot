@@ -24,12 +24,12 @@ public class JournalEntityServices {
     @Autowired
     private UserServices userServices;
 
-     @Autowired
-    private MongoClient mongoClient;  
+    @Autowired
+    private MongoClient mongoClient;
 
     public void saveJournalEntity(JournalEntity journalEntity, String username) throws Exception {
-        ClientSession session = mongoClient.startSession();  // Use the injected MongoClient
-        
+        ClientSession session = mongoClient.startSession(); // Use the injected MongoClient
+
         try {
             session.startTransaction();
 
@@ -58,7 +58,6 @@ public class JournalEntityServices {
         }
     }
 
-
     public void saveJournalEntity(JournalEntity journalEntity) {
         journalEntity.setDate(LocalDateTime.now());
         journalEntityRepository.save(journalEntity);
@@ -73,10 +72,17 @@ public class JournalEntityServices {
     }
 
     public boolean deleteJournalEntity(ObjectId id, String username) throws Exception {
+        boolean removed = false;
         UserEntity user = userServices.findByName(username);
-        user.getJournalEntities().removeIf(x -> x.getId().equals(id));
-        userServices.saveUser(user);
-        journalEntityRepository.deleteById(id);
-        return true;
+        removed = user.getJournalEntities().removeIf(x -> x.getId().equals(id));
+        if (removed) {
+            userServices.saveNewUser(user);
+            journalEntityRepository.deleteById(id);
+        }
+        return removed;
+    }
+
+    public List<JournalEntity> findByUserName(String userName) {
+        return null;
     }
 }
