@@ -32,6 +32,15 @@ public class UserServices {
             throw new Exception("User with the same username already exists.");
         }
     }
+    public void createAdmin(UserEntity user) throws Exception {
+        try {
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
+            user.setRoles(Arrays.asList("ADMIN","USER"));
+            userRepository.save(user);
+        } catch (DuplicateKeyException e) {
+            throw new Exception("User with the same username already exists.");
+        }
+    }
     public void saveNewUser(UserEntity user) throws Exception {
         try {
             userRepository.save(user);
